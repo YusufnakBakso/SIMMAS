@@ -165,3 +165,4 @@ export default function SiswaJurnalDetailModal({ entry, onClose }: SiswaJurnalDe
 
 
 
+

@@ -24,3 +24,4 @@ WHERE table_name = 'logbook' AND column_name = 'deleted_at';
 
 
 
+

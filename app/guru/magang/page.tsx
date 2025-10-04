@@ -117,6 +117,25 @@ export default function GuruMagangManagement() {
     nilai_akhir: null
   });
 
+  // Function to get default period from existing magang data
+  const getDefaultPeriod = () => {
+    if (magangList.length === 0) return { start: '', end: '' };
+    
+    // Get the most recent magang period
+    const recentMagang = magangList
+      .filter(m => m.tanggal_mulai && m.tanggal_selesai)
+      .sort((a, b) => new Date(b.tanggal_mulai!).getTime() - new Date(a.tanggal_mulai!).getTime())[0];
+    
+    if (recentMagang) {
+      return {
+        start: recentMagang.tanggal_mulai!,
+        end: recentMagang.tanggal_selesai!
+      };
+    }
+    
+    return { start: '', end: '' };
+  };
+
   useEffect(() => {
     setCurrentPage(1);
     fetchMagangData();
@@ -297,11 +316,12 @@ export default function GuruMagangManagement() {
 
   const openEditDialog = (magang: Magang) => {
     setSelectedMagang(magang);
+    const defaultPeriod = getDefaultPeriod();
     setFormData({
       siswa_id: magang.siswa_id,
       dudi_id: magang.dudi_id,
-      tanggal_mulai: magang.tanggal_mulai || '',
-      tanggal_selesai: magang.tanggal_selesai || '',
+      tanggal_mulai: magang.tanggal_mulai || defaultPeriod.start,
+      tanggal_selesai: magang.tanggal_selesai || defaultPeriod.end,
       status: magang.status === 'diterima' ? 'berlangsung' : magang.status as any,
       nilai_akhir: magang.nilai_akhir
     });
@@ -314,11 +334,12 @@ export default function GuruMagangManagement() {
   };
 
   const resetFormData = () => {
+    const defaultPeriod = getDefaultPeriod();
     setFormData({
       siswa_id: 0,
       dudi_id: 0,
-      tanggal_mulai: '',
-      tanggal_selesai: '',
+      tanggal_mulai: defaultPeriod.start,
+      tanggal_selesai: defaultPeriod.end,
       status: 'berlangsung',
       nilai_akhir: null
     });
@@ -451,10 +472,10 @@ export default function GuruMagangManagement() {
             </div>
             
             <div className="flex flex-col sm:flex-row gap-4">
-              <div className="relative flex-1 max-w-sm">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-                <Input
-                  placeholder="Cari siswa, guru, atau DUDI..."
+              <div className="relative flex -1 max-w-sm">
+                <Search className="absolute  left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                <Input 
+                  placeholder="Cari siswa,  guru, atau DUDI..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="pl-9"
@@ -753,6 +774,7 @@ export default function GuruMagangManagement() {
                       onChange={(e) => setFormData(prev => ({ ...prev, tanggal_mulai: e.target.value }))}
                       required
                     />
+                    <p className="text-xs text-gray-500 mt-1">Otomatis terisi berdasarkan periode magang terbaru</p>
                   </div>
                   
                   <div>
@@ -762,6 +784,7 @@ export default function GuruMagangManagement() {
                       value={formData.tanggal_selesai}
                       onChange={(e) => setFormData(prev => ({ ...prev, tanggal_selesai: e.target.value }))}
                     />
+                    <p className="text-xs text-gray-500 mt-1">Otomatis terisi berdasarkan periode magang terbaru</p>
                   </div>
                   
                   <div>
@@ -838,6 +861,7 @@ export default function GuruMagangManagement() {
                         value={formData.tanggal_mulai}
                         onChange={(e) => setFormData(prev => ({ ...prev, tanggal_mulai: e.target.value }))}
                       />
+                      <p className="text-xs text-gray-500 mt-1">Otomatis terisi berdasarkan periode magang terbaru</p>
                     </div>
                     
                     <div>
@@ -847,6 +871,7 @@ export default function GuruMagangManagement() {
                         value={formData.tanggal_selesai}
                         onChange={(e) => setFormData(prev => ({ ...prev, tanggal_selesai: e.target.value }))}
                       />
+                      <p className="text-xs text-gray-500 mt-1">Otomatis terisi berdasarkan periode magang terbaru</p>
                     </div>
                     
                     <div>
